@@ -109,12 +109,7 @@ pub fn search(
     Ok((results, truncated))
 }
 
-fn make_result(
-    index: &DocumentIndex,
-    bytes: &[u8],
-    id: u32,
-    kind: MatchKind,
-) -> SearchResult {
+fn make_result(index: &DocumentIndex, bytes: &[u8], id: u32, kind: MatchKind) -> SearchResult {
     let node = index.to_node(bytes, id);
     let np = index.node_path(bytes, id);
     SearchResult {

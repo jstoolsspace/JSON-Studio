@@ -164,8 +164,7 @@ impl DocumentIndex {
                     pointer.push_str(&i.to_string());
                 }
                 NodeKey::Member { key_start, key_end } => {
-                    let name =
-                        decode_json_string(&bytes[key_start as usize..key_end as usize]);
+                    let name = decode_json_string(&bytes[key_start as usize..key_end as usize]);
                     if is_identifier(&name) {
                         path.push('.');
                         path.push_str(&name);
@@ -454,7 +453,7 @@ mod tests {
         exp.insert(0);
         let (ids, total) = d.visible_window(&exp, 3, 4);
         assert_eq!(total, 11); // array + 10 elements
-        // offset 3 in visible order: root=0(idx0), then elems => visible[3] is element index 2
+                               // offset 3 in visible order: root=0(idx0), then elems => visible[3] is element index 2
         assert_eq!(ids.len(), 4);
     }
 }

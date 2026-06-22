@@ -14,12 +14,7 @@ use crate::model::{ArrayMode, ChangeKind, DiffEntry, DiffResult, DiffSummary};
 
 const PREVIEW: usize = 140;
 
-pub fn diff_values(
-    left: &Value,
-    right: &Value,
-    mode: &ArrayMode,
-    limit: usize,
-) -> DiffResult {
+pub fn diff_values(left: &Value, right: &Value, mode: &ArrayMode, limit: usize) -> DiffResult {
     let mut out = Vec::new();
     let mut truncated = false;
     diff_node(left, right, "", "", mode, limit, &mut out, &mut truncated);
@@ -248,7 +243,11 @@ mod tests {
         assert_eq!(d.summary.changed, 1); // b
         assert_eq!(d.summary.added, 1); // c
         assert_eq!(d.summary.removed, 0);
-        let changed = d.entries.iter().find(|e| e.kind == ChangeKind::Changed).unwrap();
+        let changed = d
+            .entries
+            .iter()
+            .find(|e| e.kind == ChangeKind::Changed)
+            .unwrap();
         assert_eq!(changed.path, "/b");
         assert_eq!(changed.left.as_deref(), Some("2"));
         assert_eq!(changed.right.as_deref(), Some("3"));
@@ -276,12 +275,7 @@ mod tests {
         let l = json!([{"id": "a", "v": 1}, {"id": "b", "v": 2}]);
         let r = json!([{"id": "b", "v": 2}, {"id": "a", "v": 99}]);
         // By index this would be two changes; by key only "a".v changes.
-        let d = diff_values(
-            &l,
-            &r,
-            &ArrayMode::ByKey { key: "id".into() },
-            1000,
-        );
+        let d = diff_values(&l, &r, &ArrayMode::ByKey { key: "id".into() }, 1000);
         assert_eq!(d.summary.changed, 1);
         let e = &d.entries[0];
         assert_eq!(e.left_pointer.as_deref(), Some("/0/v"));

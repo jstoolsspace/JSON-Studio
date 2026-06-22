@@ -23,7 +23,10 @@ pub enum NodeKey {
     /// Array element with its index.
     Index(u32),
     /// Object member: byte span of the raw key token (including the quotes).
-    Member { key_start: u32, key_end: u32 },
+    Member {
+        key_start: u32,
+        key_end: u32,
+    },
 }
 
 /// Compact, immutable record for a single JSON node. Offsets are `u32`
@@ -206,7 +209,9 @@ impl<'a> Parser<'a> {
     fn parse_value(&mut self, parent: u32, key: NodeKey, depth: u32) -> Result<(), ParseError> {
         self.skip_ws();
         let start = self.pos as u32;
-        let c = self.peek().ok_or_else(|| self.err("unexpected end of input"))?;
+        let c = self
+            .peek()
+            .ok_or_else(|| self.err("unexpected end of input"))?;
         let idx = self.nodes.len() as u32;
         match c {
             b'{' | b'[' => {
@@ -321,10 +326,7 @@ impl<'a> Parser<'a> {
             // Separator between elements.
             if self.stack[container_stack_pos].count > 0 {
                 if c != b',' {
-                    return Err(self.err(format!(
-                        "expected `,` or `{}`",
-                        close as char
-                    )));
+                    return Err(self.err(format!("expected `,` or `{}`", close as char)));
                 }
                 self.pos += 1;
                 self.skip_ws();

@@ -88,11 +88,7 @@ pub fn collect_fields(bytes: &[u8], records: &[Record], sample: usize) -> Vec<Js
 
 /// Produce cell previews for a single record over the requested columns.
 /// Returns (valid, cells).
-pub fn record_cells(
-    bytes: &[u8],
-    rec: &Record,
-    columns: &[String],
-) -> (bool, Vec<Option<String>>) {
+pub fn record_cells(bytes: &[u8], rec: &Record, columns: &[String]) -> (bool, Vec<Option<String>>) {
     if rec.error.is_some() {
         return (false, vec![None; columns.len()]);
     }

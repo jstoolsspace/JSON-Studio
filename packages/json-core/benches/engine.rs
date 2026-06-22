@@ -153,7 +153,12 @@ fn benches(c: &mut Criterion) {
         let vb = query::parse_value(d1b.as_bytes()).unwrap();
         c.bench_function("diff/by_index_1mb", |b| {
             b.iter(|| {
-                diff_values(black_box(&va), black_box(&vb), &ArrayMode::ByIndex, 1_000_000)
+                diff_values(
+                    black_box(&va),
+                    black_box(&vb),
+                    &ArrayMode::ByIndex,
+                    1_000_000,
+                )
             })
         });
     }

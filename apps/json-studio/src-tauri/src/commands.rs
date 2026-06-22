@@ -377,11 +377,7 @@ pub fn set_subtree_expanded(
 }
 
 #[tauri::command]
-pub fn expand_to_depth(
-    id: u32,
-    depth: u32,
-    state: State<'_, AppState>,
-) -> Result<(), String> {
+pub fn expand_to_depth(id: u32, depth: u32, state: State<'_, AppState>) -> Result<(), String> {
     with_index_mut(id, &state, |idx, set| {
         set.clear();
         for (i, n) in idx.nodes.iter().enumerate() {
@@ -403,11 +399,7 @@ pub fn collapse_all(id: u32, state: State<'_, AppState>) -> Result<(), String> {
 }
 
 #[tauri::command]
-pub fn get_node_value(
-    id: u32,
-    node_id: u32,
-    state: State<'_, AppState>,
-) -> Result<String, String> {
+pub fn get_node_value(id: u32, node_id: u32, state: State<'_, AppState>) -> Result<String, String> {
     let docs = state.docs.lock().map_err(|_| "state lock poisoned")?;
     let s = docs.get(&id).ok_or("unknown document id")?;
     let idx = s.index.as_ref().ok_or("document has no parsed tree")?;
@@ -614,7 +606,9 @@ pub fn init_watcher(app: &AppHandle) -> Result<(), String> {
         let Ok(event) = res else { return };
         if !matches!(
             event.kind,
-            notify::EventKind::Modify(_) | notify::EventKind::Create(_) | notify::EventKind::Remove(_)
+            notify::EventKind::Modify(_)
+                | notify::EventKind::Create(_)
+                | notify::EventKind::Remove(_)
         ) {
             return;
         }
@@ -714,7 +708,12 @@ pub fn reload_document(id: u32, state: State<'_, AppState>) -> Result<OpenResult
     }
 
     let metadata = match &index {
-        Some(idx) => idx.metadata(path.to_string_lossy().to_string(), size, encoding_label.clone(), format),
+        Some(idx) => idx.metadata(
+            path.to_string_lossy().to_string(),
+            size,
+            encoding_label.clone(),
+            format,
+        ),
         None => DocumentMetadata {
             path: path.to_string_lossy().to_string(),
             size_bytes: size,

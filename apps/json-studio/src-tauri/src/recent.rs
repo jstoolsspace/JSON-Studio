@@ -59,11 +59,7 @@ fn save(app: &AppHandle, entries: &[RecentEntry]) -> Result<(), String> {
 
 fn sort_and_trim(mut entries: Vec<RecentEntry>) -> Vec<RecentEntry> {
     // Pinned first, then most-recent first.
-    entries.sort_by(|a, b| {
-        b.pinned
-            .cmp(&a.pinned)
-            .then(b.opened_at.cmp(&a.opened_at))
-    });
+    entries.sort_by(|a, b| b.pinned.cmp(&a.pinned).then(b.opened_at.cmp(&a.opened_at)));
     // Trim only the unpinned tail.
     let mut pinned: Vec<RecentEntry> = entries.iter().filter(|e| e.pinned).cloned().collect();
     let unpinned: Vec<RecentEntry> = entries

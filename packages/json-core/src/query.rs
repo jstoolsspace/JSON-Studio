@@ -16,8 +16,7 @@ use crate::model::JsonNode;
 
 /// Build a lossless `serde_json::Value` for querying.
 pub fn parse_value(bytes: &[u8]) -> Result<Value, String> {
-    serde_json::from_slice(bytes)
-        .map_err(|e| format!("could not parse document for query: {e}"))
+    serde_json::from_slice(bytes).map_err(|e| format!("could not parse document for query: {e}"))
 }
 
 /// Run a JSONPath query against a pre-built value, mapping results to nodes.
@@ -72,8 +71,7 @@ mod tests {
     fn wildcard_and_mapping_back_to_nodes() {
         let s = r#"{"items": [{"id": 1}, {"id": 2}, {"id": 3}]}"#;
         let (d, v) = setup(s);
-        let (nodes, count, _) =
-            run_query(&d, s.as_bytes(), &v, "$.items[*].id", 100).unwrap();
+        let (nodes, count, _) = run_query(&d, s.as_bytes(), &v, "$.items[*].id", 100).unwrap();
         assert_eq!(count, 3);
         let previews: Vec<_> = nodes.iter().map(|n| n.preview.clone()).collect();
         assert_eq!(previews, vec!["1", "2", "3"]);
@@ -92,8 +90,7 @@ mod tests {
     fn limit_truncates() {
         let s = r#"[1,2,3,4,5]"#;
         let (d, v) = setup(s);
-        let (nodes, count, truncated) =
-            run_query(&d, s.as_bytes(), &v, "$[*]", 3).unwrap();
+        let (nodes, count, truncated) = run_query(&d, s.as_bytes(), &v, "$[*]", 3).unwrap();
         assert_eq!(count, 5);
         assert_eq!(nodes.len(), 3);
         assert!(truncated);
