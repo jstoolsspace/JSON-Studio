@@ -1,0 +1,31 @@
+[package]
+name = "json-studio"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "JSTools JSON Studio — a private desktop workspace for exploring, querying and comparing JSON."
+default-run = "json-studio"
+
+[lib]
+name = "json_studio_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2", features = [] }
+
+[dependencies]
+tauri = { version = "2", features = [] }
+tauri-plugin-dialog = "2"
+json-core = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+memmap2 = { workspace = true }
+encoding_rs = { workspace = true }
+chardetng = { workspace = true }
+notify = { workspace = true }
+thiserror = { workspace = true }
+
+[features]
+# This feature is used for production builds where `devUrl` is not used.
+custom-protocol = ["tauri/custom-protocol"]

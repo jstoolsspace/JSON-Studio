@@ -1,0 +1,37 @@
+# Cargo workspace root.
+# The Rust members are the reusable engine crate (json-core) and the Tauri app backend.
+[workspace]
+resolver = "2"
+members = [
+    "packages/json-core",
+    "apps/json-studio/src-tauri",
+]
+
+[workspace.package]
+edition = "2021"
+license = "MIT"
+rust-version = "1.77"
+
+[workspace.dependencies]
+# Shared engine
+json-core = { path = "packages/json-core" }
+
+# Common third-party crates pinned at the workspace level for consistency.
+serde = { version = "1", features = ["derive"] }
+serde_json = { version = "1", features = ["arbitrary_precision", "preserve_order", "raw_value"] }
+memmap2 = "0.9"
+notify = "6"
+notify-debouncer-full = "0.3"
+encoding_rs = "0.8"
+chardetng = "0.1"
+thiserror = "1"
+serde_json_path = "0.7"
+similar = "2"
+rayon = "1"
+regex = "1"
+
+[profile.release]
+opt-level = 3
+lto = true
+codegen-units = 1
+strip = true

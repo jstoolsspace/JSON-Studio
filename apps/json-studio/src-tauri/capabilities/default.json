@@ -1,0 +1,13 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "default",
+  "description": "Least-privilege permissions: the app's own commands, the open-file dialog, and core window events. No filesystem-wide, shell, or HTTP access.",
+  "windows": ["main"],
+  "permissions": [
+    "core:default",
+    "core:window:allow-close",
+    "core:window:allow-destroy",
+    "dialog:allow-open",
+    "dialog:allow-save"
+  ]
+}

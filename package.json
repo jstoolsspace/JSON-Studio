@@ -1,0 +1,27 @@
+{
+  "name": "jstools-json-studio-monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "A private desktop workspace for exploring, querying and comparing JSON.",
+  "license": "MIT",
+  "packageManager": "pnpm@9.12.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "pnpm --filter @jstools/json-studio dev",
+    "build": "pnpm --filter @jstools/json-studio build",
+    "tauri": "pnpm --filter @jstools/json-studio tauri",
+    "typecheck": "pnpm -r --if-present typecheck",
+    "test": "pnpm -r --if-present test",
+    "rust:check": "cargo check --workspace",
+    "rust:test": "cargo test --workspace",
+    "rust:clippy": "cargo clippy --workspace --all-targets -- -D warnings",
+    "bench": "cargo bench -p json-core",
+    "fixtures": "node scripts/gen-fixtures.mjs",
+    "fixtures:huge": "node scripts/gen-fixtures.mjs --huge"
+  },
+  "devDependencies": {
+    "typescript": "^5.6.3"
+  }
+}

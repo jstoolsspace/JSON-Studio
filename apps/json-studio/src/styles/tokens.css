@@ -1,0 +1,99 @@
+/*
+ * Design tokens.
+ *
+ * These approximate the JSTools.Space palette and scale. When the real token
+ * package is available, replace the values here (the variable names are the
+ * contract used across the UI).
+ *
+ * Fonts: Geist (UI) and JetBrains Mono (JSON). Drop the font files into
+ * `public/fonts/` and the @font-face rules below will pick them up; until then
+ * the system fallbacks keep the app usable.
+ */
+
+:root {
+  /* Type */
+  --font-ui: "Geist", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, "Liberation Mono",
+    monospace;
+  --fs-xs: 11px;
+  --fs-sm: 12px;
+  --fs-md: 13px;
+  --fs-lg: 15px;
+  --lh-tight: 1.3;
+  --lh-normal: 1.5;
+  /* User-adjustable (Settings). Defaults mirror the base scale. */
+  --mono-fs: var(--fs-md);
+  --mono-lh: 1.5;
+
+  /* Spacing */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 24px;
+
+  --radius: 6px;
+  --radius-sm: 4px;
+
+  /* Value-type accents (shared across themes) */
+  --t-string: #4caf78;
+  --t-number: #e0913a;
+  --t-boolean: #c678dd;
+  --t-null: #8a93a6;
+  --t-key: #5aa9e6;
+  --t-added: #3fb950;
+  --t-removed: #f85149;
+  --t-changed: #d29922;
+}
+
+/* Dark theme (default) */
+:root,
+[data-theme="dark"] {
+  --bg: #0e1116;
+  --bg-elevated: #161b22;
+  --bg-inset: #0a0d12;
+  --panel: #11161d;
+  --border: #232a33;
+  --border-strong: #303a46;
+  --fg: #e6edf3;
+  --fg-muted: #9aa4b2;
+  --fg-faint: #6b7585;
+  --accent: #4c8dff;
+  --accent-fg: #ffffff;
+  --row-hover: #1a212b;
+  --row-selected: #1f2a3a;
+  --guide: #2a323d;
+  --shadow: rgba(0, 0, 0, 0.4);
+}
+
+[data-theme="light"] {
+  --bg: #ffffff;
+  --bg-elevated: #f6f8fa;
+  --bg-inset: #f0f3f6;
+  --panel: #fbfcfd;
+  --border: #d8dee4;
+  --border-strong: #c2cad3;
+  --fg: #1c2128;
+  --fg-muted: #57606a;
+  --fg-faint: #8c959f;
+  --accent: #0969da;
+  --accent-fg: #ffffff;
+  --row-hover: #f0f3f6;
+  --row-selected: #ddeaff;
+  --guide: #e2e7ec;
+  --shadow: rgba(140, 149, 159, 0.2);
+
+  --t-string: #1a7f4b;
+  --t-number: #b15c00;
+  --t-boolean: #8250df;
+  --t-null: #6e7781;
+  --t-key: #0550ae;
+}
+
+/*
+ * To use the brand fonts, drop the woff2 files into `public/fonts/` and add the
+ * matching @font-face rules here (Geist-Regular.woff2, Geist-Medium.woff2,
+ * JetBrainsMono-Regular.woff2). Until then the system fallbacks in --font-ui /
+ * --font-mono are used — no @font-face is declared so there are no failed font
+ * requests.
+ */

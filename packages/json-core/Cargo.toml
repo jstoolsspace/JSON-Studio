@@ -1,0 +1,30 @@
+[package]
+name = "json-core"
+version = "0.1.0"
+edition.workspace = true
+license.workspace = true
+rust-version.workspace = true
+description = "Reusable lossless JSON engine: streaming index, lazy materialization, search, query and diff. No Tauri dependency; also targets wasm."
+
+[lib]
+crate-type = ["lib", "cdylib"]
+
+[dependencies]
+serde = { workspace = true }
+serde_json = { workspace = true }
+serde_json_path = { workspace = true }
+regex = { workspace = true }
+thiserror = { workspace = true }
+
+[features]
+default = []
+# Enables the wasm-bindgen surface for reuse in a browser extension (Session: future).
+wasm = []
+
+[dev-dependencies]
+serde_json = { workspace = true }
+criterion = { version = "0.5", features = ["html_reports"] }
+
+[[bench]]
+name = "engine"
+harness = false

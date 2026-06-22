@@ -1,0 +1,28 @@
+# Node
+node_modules/
+dist/
+*.tsbuildinfo
+.vite/
+
+# Rust
+target/
+**/*.rs.bk
+
+# Tauri
+apps/json-studio/src-tauri/gen/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/*
+!.vscode/extensions.json
+
+# Local state / logs
+*.log
+
+# Generated benchmark fixtures
+fixtures/
+
+# Criterion output
+criterion/
