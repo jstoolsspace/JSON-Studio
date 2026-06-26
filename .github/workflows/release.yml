@@ -68,6 +68,8 @@ jobs:
           tagName: ${{ github.ref_name }}
           releaseName: "JSON Studio ${{ github.ref_name }}"
           releaseBody: "See the assets below to download and install."
-          releaseDraft: true
+          # Publish immediately so the release is public as soon as the build
+          # finishes. Set back to true if you'd rather review a draft first.
+          releaseDraft: false
           prerelease: false
           args: ${{ matrix.args }}
