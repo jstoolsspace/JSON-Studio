@@ -9,7 +9,9 @@ use std::path::PathBuf;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use serde::{Deserialize, Serialize};
-use tauri::{AppHandle, Manager};
+use tauri::AppHandle;
+
+use crate::paths;
 
 const MAX_RECENT: usize = 30;
 const FILE_NAME: &str = "recent.json";
@@ -35,12 +37,7 @@ fn now_ms() -> u64 {
 }
 
 fn store_path(app: &AppHandle) -> Result<PathBuf, String> {
-    let dir = app
-        .path()
-        .app_config_dir()
-        .map_err(|e| format!("cannot resolve config dir: {e}"))?;
-    fs::create_dir_all(&dir).map_err(|e| format!("cannot create config dir: {e}"))?;
-    Ok(dir.join(FILE_NAME))
+    Ok(paths::config_dir(app)?.join(FILE_NAME))
 }
 
 pub fn load(app: &AppHandle) -> Result<Vec<RecentEntry>, String> {

@@ -5,6 +5,7 @@
 //! surface to the UI.
 
 mod commands;
+mod paths;
 mod recent;
 mod settings;
 mod state;
@@ -24,6 +25,7 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(tauri::generate_handler![
+            commands::is_portable,
             commands::open_document,
             commands::open_text,
             commands::update_text,

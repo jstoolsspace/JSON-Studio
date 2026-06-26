@@ -79,12 +79,22 @@ Download the latest installer for your OS from the
 
 | OS | File |
 |----|------|
-| Windows | `.msi` or `*-setup.exe` |
+| Windows | `.msi` or `*-setup.exe` (installer) · `*-portable-x64.zip` (no install) |
 | macOS | `.dmg` (Apple Silicon and Intel) |
 | Linux | `.AppImage` or `.deb` |
 
 > The app isn't code‑signed yet, so the OS may warn on first launch.
 > **Windows:** *More info → Run anyway*. **macOS:** right‑click the app → *Open*.
+
+### Portable mode (Windows)
+
+The `*-portable-x64.zip` build runs without installation. Unzip it and launch
+`JSON Studio.exe`. In portable mode the app stores its settings, recent files and
+session in a `JSONStudioData` folder **next to the executable** — nothing is
+written to the registry or your user profile, so it's safe to run from a USB
+drive. (Portable mode is triggered by the bundled `portable.txt` marker; you can
+also enable it for an installed copy by creating an empty `portable.txt` beside
+the exe. Requires the Edge WebView2 runtime, preinstalled on Windows 10/11.)
 
 ## Keyboard shortcuts
 

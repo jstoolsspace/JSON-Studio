@@ -73,3 +73,43 @@ jobs:
           releaseDraft: false
           prerelease: false
           args: ${{ matrix.args }}
+
+      # Build a portable Windows zip: the raw exe + a `portable.txt` marker so
+      # the app keeps its settings in a `JSONStudioData` folder beside itself
+      # instead of the user profile. Runs only for tag pushes on Windows.
+      - name: Build portable Windows zip
+        if: matrix.platform == 'windows-latest' && startsWith(github.ref, 'refs/tags/')
+        shell: pwsh
+        run: |
+          $tag = "${{ github.ref_name }}"
+          $ver = $tag.TrimStart("v")
+          $exe = "apps/json-studio/src-tauri/target/release/json-studio.exe"
+          if (-not (Test-Path $exe)) { throw "binary not found at $exe" }
+          $stage = "portable/JSON Studio"
+          New-Item -ItemType Directory -Force -Path $stage | Out-Null
+          Copy-Item $exe (Join-Path $stage "JSON Studio.exe")
+          # Marker that switches the app into portable mode at runtime.
+          New-Item -ItemType File -Force -Path (Join-Path $stage "portable.txt") | Out-Null
+          @"
+          JSON Studio $ver - Portable
+
+          Run "JSON Studio.exe". Settings, recent files and session are stored in
+          the "JSONStudioData" folder next to the executable (created on first run),
+          so nothing is written to the registry or your user profile.
+
+          Requires the Microsoft Edge WebView2 runtime, which is preinstalled on
+          Windows 10/11. If missing, get it from:
+          https://developer.microsoft.com/microsoft-edge/webview2/
+          "@ | Set-Content -Path (Join-Path $stage "README.txt") -Encoding UTF8
+          $zip = "JSON-Studio-$ver-portable-x64.zip"
+          Compress-Archive -Path "portable/*" -DestinationPath $zip -Force
+          echo "PORTABLE_ZIP=$zip" >> $env:GITHUB_ENV
+
+      - name: Upload portable zip to release
+        if: matrix.platform == 'windows-latest' && startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: ${{ env.PORTABLE_ZIP }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

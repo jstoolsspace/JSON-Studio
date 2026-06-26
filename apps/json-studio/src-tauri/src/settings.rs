@@ -7,15 +7,12 @@ use std::fs;
 use std::path::PathBuf;
 
 use serde_json::Value;
-use tauri::{AppHandle, Manager};
+use tauri::AppHandle;
+
+use crate::paths;
 
 fn store_path(app: &AppHandle, name: &str) -> Result<PathBuf, String> {
-    let dir = app
-        .path()
-        .app_config_dir()
-        .map_err(|e| format!("cannot resolve config dir: {e}"))?;
-    fs::create_dir_all(&dir).map_err(|e| format!("cannot create config dir: {e}"))?;
-    Ok(dir.join(name))
+    Ok(paths::config_dir(app)?.join(name))
 }
 
 fn load_named(app: &AppHandle, name: &str) -> Result<Option<Value>, String> {

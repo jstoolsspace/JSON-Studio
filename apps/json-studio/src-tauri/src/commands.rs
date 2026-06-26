@@ -20,9 +20,16 @@ use notify::{RecursiveMode, Watcher};
 use serde::Serialize;
 use tauri::{AppHandle, Emitter, Manager, State};
 
+use crate::paths;
 use crate::recent::{self, RecentEntry};
 use crate::settings;
 use crate::state::{AppState, DocBytes, DocumentSession};
+
+/// Whether the app is running in portable mode (data stored beside the exe).
+#[tauri::command]
+pub fn is_portable() -> bool {
+    paths::is_portable()
+}
 
 #[derive(Serialize)]
 pub struct OpenResult {
