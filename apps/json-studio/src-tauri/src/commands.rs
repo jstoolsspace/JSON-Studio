@@ -424,6 +424,19 @@ pub fn get_node_path(
     Ok(idx.node_path(s.slice(), node_id))
 }
 
+/// Expand all ancestors of a node and return its index in the visible tree.
+#[tauri::command]
+pub fn reveal_node(id: u32, node_id: u32, state: State<'_, AppState>) -> Result<usize, String> {
+    with_index_mut(id, &state, |idx, set| {
+        if (node_id as usize) >= idx.len() {
+            return Err("unknown node id".to_string());
+        }
+        idx.expand_ancestors(set, node_id);
+        idx.visible_index_of(set, node_id)
+            .ok_or_else(|| "node is not visible".to_string())
+    })?
+}
+
 #[tauri::command]
 pub fn get_raw_lines(
     id: u32,
@@ -527,6 +540,26 @@ pub fn run_query(
         execution_ms: started.elapsed().as_millis(),
         truncated,
     })
+}
+
+/// Re-serialize the whole document as a single JSON value, pretty-printed or
+/// minified. Honors the in-memory size cap (same as query/diff).
+#[tauri::command]
+pub fn format_document(
+    id: u32,
+    pretty: bool,
+    state: State<'_, AppState>,
+) -> Result<String, String> {
+    let cap = state.query_limit_bytes();
+    let mut docs = state.docs.lock().map_err(|_| "state lock poisoned")?;
+    let s = docs.get_mut(&id).ok_or("unknown document id")?;
+    ensure_query_value(s, cap)?;
+    let value = s.query_value.as_ref().expect("value built above");
+    if pretty {
+        serde_json::to_string_pretty(value).map_err(|e| e.to_string())
+    } else {
+        serde_json::to_string(value).map_err(|e| e.to_string())
+    }
 }
 
 #[tauri::command]

@@ -17,7 +17,7 @@ export function QueryView() {
   // array from the selector would loop the store and crash the view.
   const queryHistory = useApp((s) => s.queryHistory);
   const pushQuery = useApp((s) => s.pushQuery);
-  const gotoLine = useApp((s) => s.gotoLine);
+  const gotoNode = useApp((s) => s.gotoNode);
 
   const [expr, setExpr] = useState("$");
   const [nodes, setNodes] = useState<JsonNode[]>([]);
@@ -176,8 +176,8 @@ export function QueryView() {
           <button
             key={n.id}
             className="search-hit"
-            onClick={() => gotoLine(tab!.docId, n.line)}
-            title={`line ${n.line}`}
+            onClick={() => gotoNode(tab!.docId, n.id)}
+            title={`Reveal in tree · line ${n.line}`}
           >
             <span className="hit-kind value">{n.value_type[0]?.toUpperCase()}</span>
             <span className={`hit-preview ${n.value_type}`}>{n.preview}</span>

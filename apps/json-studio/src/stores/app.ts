@@ -44,6 +44,8 @@ interface AppState {
   helpOpen: boolean;
   /// Pending line to scroll the Raw view to (1-based), consumed by RawView.
   rawGoto: number | null;
+  /// Pending tree node to reveal+scroll to, consumed by TreeView.
+  treeReveal: { docId: number; nodeId: number; nonce: number } | null;
   queryHistory: Record<number, string[]>;
   recent: RecentEntry[];
 
@@ -66,6 +68,8 @@ interface AppState {
   markScratch: (docId: number, text: string) => void;
   gotoLine: (docId: number, line: number) => void;
   clearGoto: () => void;
+  gotoNode: (docId: number, nodeId: number) => void;
+  clearTreeReveal: () => void;
   pushQuery: (docId: number, expr: string) => void;
   setRecent: (recent: RecentEntry[]) => void;
   clearQueryHistory: () => void;
@@ -81,6 +85,7 @@ export const useApp = create<AppState>((set, get) => ({
   quitting: false,
   helpOpen: false,
   rawGoto: null,
+  treeReveal: null,
   queryHistory: {},
   recent: [],
 
@@ -184,6 +189,18 @@ export const useApp = create<AppState>((set, get) => ({
   },
 
   clearGoto: () => set({ rawGoto: null }),
+
+  gotoNode: (docId, nodeId) => {
+    set((s) => ({
+      activeId: docId,
+      tabs: s.tabs.map((t) =>
+        t.docId === docId ? { ...t, viewMode: "tree" } : t,
+      ),
+      treeReveal: { docId, nodeId, nonce: Date.now() },
+    }));
+  },
+
+  clearTreeReveal: () => set({ treeReveal: null }),
 
   pushQuery: (docId, expr) =>
     set((s) => {

@@ -8,7 +8,7 @@ import { runSearch } from "../ipc/commands";
 
 export function SearchPanel({ tab }: { tab: Tab }) {
   const toggleSearch = useApp((s) => s.toggleSearch);
-  const gotoLine = useApp((s) => s.gotoLine);
+  const gotoNode = useApp((s) => s.gotoNode);
   const searchLimit = useSettings((s) => s.searchLimit);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -70,7 +70,7 @@ export function SearchPanel({ tab }: { tab: Tab }) {
   }
 
   function jump(r: SearchResult) {
-    gotoLine(tab.docId, r.line);
+    gotoNode(tab.docId, r.node_id);
   }
 
   function step(delta: number) {

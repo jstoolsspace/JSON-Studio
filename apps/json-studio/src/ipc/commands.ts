@@ -78,6 +78,16 @@ export function getNodePath(id: number, nodeId: number): Promise<NodePath> {
   return invoke<NodePath>("get_node_path", { id, nodeId });
 }
 
+/// Expand the node's ancestors and return its row index in the visible tree.
+export function revealNode(id: number, nodeId: number): Promise<number> {
+  return invoke<number>("reveal_node", { id, nodeId });
+}
+
+/// Re-serialize the whole document, pretty-printed or minified.
+export function formatDocument(id: number, pretty: boolean): Promise<string> {
+  return invoke<string>("format_document", { id, pretty });
+}
+
 export function getRawLines(
   id: number,
   startLine: number,

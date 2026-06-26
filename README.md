@@ -34,10 +34,17 @@ your data somewhere. JSON Studio is built for serious, **offline** work:
 
 - **Tree view** — virtualized JSON tree with collapse/expand, expand‑to‑depth and
   expand‑all, type & item‑count badges, source line markers, full keyboard
-  navigation, and a right‑click menu to copy value / key / object / **JSONPath** /
+  navigation, a node **detail panel** (full path + value with one‑click copy),
+  and a right‑click menu to copy value / key / object / **JSONPath** /
   **JSON Pointer** / raw, or expand/collapse a subtree.
-- **Raw view** — the exact source with line numbers, word wrap, go‑to‑line, and
-  jump‑to‑parse‑error (with the precise error location).
+- **Image preview** — string values that are `data:image/…` URIs or bare base64
+  (PNG, JPEG, GIF, WebP, SVG) get an inline 🖼 button to view the decoded image
+  in a modal — handy for avatars and thumbnails embedded in JSON.
+- **Jump to node** — clicking a Search or JSONPath result expands its ancestors
+  and scrolls straight to it in the tree.
+- **Raw view** — the exact source with line numbers, word wrap, go‑to‑line,
+  jump‑to‑parse‑error (with the precise error location), and one‑click
+  **Copy pretty / Minify / Save** of the re‑serialized document.
 - **Search** (`Ctrl/Cmd+F`) — across keys and/or values, with case sensitivity,
   whole‑field match, **regular expressions**, subtree scoping, match count and
   next/previous navigation.

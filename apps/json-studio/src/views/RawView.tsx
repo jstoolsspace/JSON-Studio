@@ -1,11 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import { WrapText } from "lucide-react";
+import { save } from "@tauri-apps/plugin-dialog";
 import type { Tab } from "../stores/app";
 import { useApp } from "../stores/app";
 import { useSettings } from "../stores/settings";
 import { useWindowedRows } from "../hooks/useWindowedRows";
-import { getRawLines } from "../ipc/commands";
+import { formatDocument, getRawLines, saveText } from "../ipc/commands";
 
 export function RawView({ tab }: { tab: Tab }) {
   const docId = tab.docId;
@@ -55,6 +56,37 @@ export function RawView({ tab }: { tab: Tab }) {
     virtualizer.scrollToIndex(Math.min(n - 1, total.current - 1), { align: "start" });
   }
 
+  const [busy, setBusy] = useState(false);
+  const canFormat = !tab.parseError && tab.metadata.node_count > 0;
+
+  async function copyFormatted(pretty: boolean) {
+    setBusy(true);
+    try {
+      const text = await formatDocument(docId, pretty);
+      await navigator.clipboard.writeText(text);
+    } catch {
+      /* ignore */
+    } finally {
+      setBusy(false);
+    }
+  }
+
+  async function saveFormatted(pretty: boolean) {
+    setBusy(true);
+    try {
+      const text = await formatDocument(docId, pretty);
+      const path = await save({
+        defaultPath: pretty ? "pretty.json" : "minified.json",
+        filters: [{ name: "JSON", extensions: ["json"] }],
+      });
+      if (path) await saveText(path, text);
+    } catch {
+      /* ignore */
+    } finally {
+      setBusy(false);
+    }
+  }
+
   const gutterWidth = Math.max(48, String(total.current).length * 9 + 24);
 
   return (
@@ -100,6 +132,35 @@ export function RawView({ tab }: { tab: Tab }) {
           >
             Jump to error (L{tab.parseError.line})
           </button>
+        )}
+        {canFormat && (
+          <>
+            <div style={{ flex: 1 }} />
+            <button
+              className="btn"
+              disabled={busy}
+              title="Copy pretty-printed JSON"
+              onClick={() => void copyFormatted(true)}
+            >
+              Copy pretty
+            </button>
+            <button
+              className="btn"
+              disabled={busy}
+              title="Copy minified JSON"
+              onClick={() => void copyFormatted(false)}
+            >
+              Minify
+            </button>
+            <button
+              className="btn"
+              disabled={busy}
+              title="Save formatted JSON to a file"
+              onClick={() => void saveFormatted(true)}
+            >
+              Save…
+            </button>
+          </>
         )}
       </div>
 

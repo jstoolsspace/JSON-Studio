@@ -242,6 +242,40 @@ impl DocumentIndex {
         self.line_col(self.nodes[id as usize].value_start).0
     }
 
+    /// Add all ancestors of `id` (and the root) to the expanded set.
+    pub fn expand_ancestors(&self, expanded: &mut HashSet<u32>, id: u32) {
+        if let Some(root) = self.root() {
+            expanded.insert(root);
+        }
+        let mut cur = self.nodes[id as usize].parent;
+        while cur != NO_PARENT {
+            expanded.insert(cur);
+            cur = self.nodes[cur as usize].parent;
+        }
+    }
+
+    /// Position of `target` in the flattened visible list, if visible.
+    pub fn visible_index_of(&self, expanded: &HashSet<u32>, target: u32) -> Option<usize> {
+        if self.nodes.is_empty() {
+            return None;
+        }
+        let mut visible = 0usize;
+        let mut stack: Vec<u32> = vec![0];
+        while let Some(id) = stack.pop() {
+            if id == target {
+                return Some(visible);
+            }
+            visible += 1;
+            let n = &self.nodes[id as usize];
+            if n.kind.is_container() && expanded.contains(&id) {
+                for &c in self.children(id).iter().rev() {
+                    stack.push(c);
+                }
+            }
+        }
+        None
+    }
+
     /// Resolve an RFC 6901 JSON Pointer to a node id, if it exists.
     pub fn resolve_pointer(&self, bytes: &[u8], pointer: &str) -> Option<u32> {
         if pointer.is_empty() {

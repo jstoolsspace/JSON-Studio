@@ -4,6 +4,7 @@
   "2": "second",
   "1": "first",
   "name": "JSON Studio",
+  "avatar": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==",
   "active": true,
   "tags": ["lossless", "local", "fast"],
   "nested": {

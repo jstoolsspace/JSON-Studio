@@ -6,9 +6,10 @@ import {
   type KeyboardEvent as ReactKeyboardEvent,
 } from "react";
 import { useVirtualizer } from "@tanstack/react-virtual";
-import { ChevronDown, ChevronRight } from "lucide-react";
+import { ChevronDown, ChevronRight, Image as ImageIcon } from "lucide-react";
 import type { JsonNode } from "@jstools/json-ui";
 import type { Tab } from "../stores/app";
+import { useApp } from "../stores/app";
 import { useSettings } from "../stores/settings";
 import { useWindowedRows } from "../hooks/useWindowedRows";
 import {
@@ -17,10 +18,12 @@ import {
   getNodePath,
   getNodeValue,
   getTreeWindow,
+  revealNode,
   setNodeExpanded,
   setSubtreeExpanded,
 } from "../ipc/commands";
 import { NodeContextMenu, type MenuState } from "../components/NodeContextMenu";
+import { ImagePreview, isImageValue } from "../components/ImagePreview";
 
 export function TreeView({ tab }: { tab: Tab }) {
   const docId = tab.docId;
@@ -32,6 +35,13 @@ export function TreeView({ tab }: { tab: Tab }) {
   const [menu, setMenu] = useState<MenuState | null>(null);
   const indentWidth = useSettings((st) => st.indentWidth);
   const collapseDepth = useSettings((st) => st.collapseDepth);
+
+  const [imageNode, setImageNode] = useState<JsonNode | null>(null);
+  const [detail, setDetail] = useState<{ path: string; value: string } | null>(
+    null,
+  );
+  const treeReveal = useApp((s) => s.treeReveal);
+  const clearTreeReveal = useApp((s) => s.clearTreeReveal);
 
   const { total, get, ensureRange } = useWindowedRows<JsonNode>(
     async (offset, limit) => {
@@ -154,6 +164,47 @@ export function TreeView({ tab }: { tab: Tab }) {
   );
 
   const selectedId = get(selIndex)?.id;
+
+  // Consume a pending "reveal node" request (from search / query results):
+  // expand the node's ancestors on the backend, then scroll it into view.
+  useEffect(() => {
+    if (!treeReveal || treeReveal.docId !== docId) return;
+    let alive = true;
+    void revealNode(docId, treeReveal.nodeId).then((idx) => {
+      if (!alive) return;
+      rerender();
+      requestAnimationFrame(() => {
+        setSelIndex(idx);
+        virtualizer.scrollToIndex(idx, { align: "center" });
+        treeRef.current?.focus();
+      });
+      clearTreeReveal();
+    });
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [treeReveal?.nonce, docId]);
+
+  // Keep the detail panel in sync with the selected node.
+  useEffect(() => {
+    const n = get(selIndex);
+    if (!n) {
+      setDetail(null);
+      return;
+    }
+    let alive = true;
+    void Promise.all([
+      getNodePath(docId, n.id),
+      getNodeValue(docId, n.id),
+    ]).then(([p, v]) => {
+      if (alive) setDetail({ path: p.path, value: v });
+    });
+    return () => {
+      alive = false;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [docId, selIndex, version]);
 
   async function copyText(text: string) {
     try {
@@ -299,6 +350,7 @@ export function TreeView({ tab }: { tab: Tab }) {
                     }}
                     onToggle={() => void toggle(node, isOpen)}
                     onContext={(x, y) => setMenu({ x, y, node })}
+                    onImage={() => setImageNode(node)}
                   />
                 ) : (
                   <div className="tree-row" style={{ opacity: 0.4 }}>
@@ -311,11 +363,51 @@ export function TreeView({ tab }: { tab: Tab }) {
         </div>
       </div>
 
+      {detail && (
+        <div className="node-detail">
+          <div className="nd-row">
+            <span className="nd-label">Path</span>
+            <code className="nd-path" title={detail.path}>
+              {detail.path}
+            </code>
+            <button
+              className="btn icon"
+              title="Copy path"
+              onClick={() => void copyText(detail.path)}
+            >
+              ⧉
+            </button>
+          </div>
+          <div className="nd-row">
+            <span className="nd-label">Value</span>
+            <code className="nd-value" title={detail.value}>
+              {detail.value}
+            </code>
+            <button
+              className="btn icon"
+              title="Copy value"
+              onClick={() => void copyText(detail.value)}
+            >
+              ⧉
+            </button>
+          </div>
+        </div>
+      )}
+
       {menu && (
         <NodeContextMenu
           state={menu}
           onAction={onMenuAction}
           onClose={() => setMenu(null)}
+        />
+      )}
+
+      {imageNode && (
+        <ImagePreview
+          docId={docId}
+          nodeId={imageNode.id}
+          label={imageNode.key ?? `[${imageNode.array_index ?? 0}]`}
+          onClose={() => setImageNode(null)}
         />
       )}
     </>
@@ -334,6 +426,7 @@ function TreeRow({
   onSelect,
   onToggle,
   onContext,
+  onImage,
 }: {
   node: JsonNode;
   indent: number;
@@ -342,8 +435,10 @@ function TreeRow({
   onSelect: () => void;
   onToggle: () => void;
   onContext: (x: number, y: number) => void;
+  onImage: () => void;
 }) {
   const expandable = isExpandable(node);
+  const showImage = node.value_type === "string" && isImageValue(node.preview);
   return (
     <div
       id={`tnode-${node.id}`}
@@ -394,6 +489,19 @@ function TreeRow({
         <span className="tree-val preview">{node.preview}</span>
       ) : (
         <span className={`tree-val ${node.value_type}`}>{node.preview}</span>
+      )}
+
+      {showImage && (
+        <button
+          className="tree-img-btn"
+          title="Preview image"
+          onClick={(e) => {
+            e.stopPropagation();
+            onImage();
+          }}
+        >
+          <ImageIcon size={12} />
+        </button>
       )}
 
       <span className="tree-loc">L{node.line}</span>

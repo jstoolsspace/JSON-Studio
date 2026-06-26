@@ -57,8 +57,14 @@ These are intentionally **off** until signing material exists. Do not enable the
 - AppImage/deb are typically distributed unsigned; optionally provide a detached GPG signature / checksums.
 
 ### Auto-update
-- Tauri's updater can be enabled later: generate an updater keypair (`tauri signer generate`), set the public key in `tauri.conf.json`, sign artifacts with the private key (CI secret), and host an update manifest.
-- Keep the private key out of the repo; store it as a CI secret only.
+Off by default. To enable later, in this order:
+
+1. `pnpm add -D @tauri-apps/cli` then `pnpm tauri signer generate -w ~/.tauri/jsonstudio.key` — keep the **private** key out of the repo; add it (and its password) as the CI secrets `TAURI_SIGNING_PRIVATE_KEY` / `TAURI_SIGNING_PRIVATE_KEY_PASSWORD`.
+2. Add the **public** key under `plugins.updater.pubkey` in `tauri.conf.json` and add the `@tauri-apps/plugin-updater` + `tauri-plugin-updater` dependencies.
+3. Point `plugins.updater.endpoints` at a hosted `latest.json` manifest (e.g. the GitHub Releases `latest/download/latest.json`).
+4. `tauri-action` signs the artifacts and emits `latest.json` automatically once the signing secrets are present; attach it to the release.
+
+Until those secrets exist the build stays unsigned and the updater is disabled — nothing here ships a key.
 
 ## Versioning
 
