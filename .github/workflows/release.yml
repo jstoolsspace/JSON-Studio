@@ -68,9 +68,11 @@ jobs:
           tagName: ${{ github.ref_name }}
           releaseName: "JSON Studio ${{ github.ref_name }}"
           releaseBody: "See the assets below to download and install."
-          # Publish immediately so the release is public as soon as the build
-          # finishes. Set back to true if you'd rather review a draft first.
-          releaseDraft: false
+          # Keep the release as a draft until ALL matrix jobs (and the portable
+          # zip) have uploaded their assets, then publish it manually with one
+          # click. Required because the repo uses immutable releases: a published
+          # release is frozen, so jobs that finish later can't add their assets.
+          releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
 
@@ -105,11 +107,12 @@ jobs:
           Compress-Archive -Path "portable/*" -DestinationPath $zip -Force
           echo "PORTABLE_ZIP=$zip" >> $env:GITHUB_ENV
 
-      - name: Upload portable zip to release
+      # Upload into the existing draft release (created by tauri-action above)
+      # without changing its draft state, so it stays unpublished until you
+      # click Publish. Using the gh CLI avoids prematurely publishing.
+      - name: Upload portable zip to draft release
         if: matrix.platform == 'windows-latest' && startsWith(github.ref, 'refs/tags/')
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ github.ref_name }}
-          files: ${{ env.PORTABLE_ZIP }}
+        shell: pwsh
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "${{ github.ref_name }}" "$env:PORTABLE_ZIP" --clobber

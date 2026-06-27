@@ -35,7 +35,7 @@
 
   <Program_Info>
     <Program_Name>JSON Studio</Program_Name>
-    <Program_Version>1.0.1</Program_Version>
+    <Program_Version>1.0.2</Program_Version>
     <Program_Release_Month>06</Program_Release_Month>
     <Program_Release_Day>26</Program_Release_Day>
     <Program_Release_Year>2026</Program_Release_Year>
@@ -47,7 +47,7 @@
     <Program_Install_Support>Install and Uninstall</Program_Install_Support>
     <Program_OS_Support>Win11,Win10,Win10 x64,Win8 x64,Win8,Win7 x64,Win7,WinVista,Mac OS X,Mac Other,Linux,Linux Console,Linux Gnome,Linux GPL,Linux Open Source</Program_OS_Support>
     <Program_Language>English</Program_Language>
-    <Program_Change_Info>Initial public 1.0 release: lossless tree/raw/search/JSONPath/diff/JSONL views, base64 image preview, jump-to-node, format/minify/export, node detail panel.</Program_Change_Info>
+    <Program_Change_Info>Adds a portable Windows build (no install; settings kept beside the executable). Includes lossless tree/raw/search/JSONPath/diff/JSONL views, base64 image preview, jump-to-node, format/minify/export and a node detail panel.</Program_Change_Info>
     <Program_Specific_Category>Development</Program_Specific_Category>
     <Program_Categories>Development::Other</Program_Categories>
     <Program_System_Requirements>Windows 10/11, macOS, or Linux. ~150 MB RAM.</Program_System_Requirements>
@@ -102,9 +102,9 @@ JSON Studio is free and open source (MIT) and available for Windows, macOS and L
       <Application_XML_File_URL>https://raw.githubusercontent.com/jstoolsspace/JSON-Studio/main/pad_file.xml</Application_XML_File_URL>
     </Application_URLs>
     <Download_URLs>
-      <Primary_Download_URL>https://github.com/jstoolsspace/JSON-Studio/releases/download/v1.0.1/JSON.Studio_1.0.1_x64-setup.exe</Primary_Download_URL>
-      <Secondary_Download_URL>https://github.com/jstoolsspace/JSON-Studio/releases/download/v1.0.1/JSON.Studio_1.0.1_x64_en-US.msi</Secondary_Download_URL>
-      <Additional_Download_URL_1>https://github.com/jstoolsspace/JSON-Studio/releases/download/v1.0.1/JSON-Studio-1.0.1-portable-x64.zip</Additional_Download_URL_1>
+      <Primary_Download_URL>https://github.com/jstoolsspace/JSON-Studio/releases/download/v1.0.2/JSON.Studio_1.0.2_x64-setup.exe</Primary_Download_URL>
+      <Secondary_Download_URL>https://github.com/jstoolsspace/JSON-Studio/releases/download/v1.0.2/JSON.Studio_1.0.2_x64_en-US.msi</Secondary_Download_URL>
+      <Additional_Download_URL_1>https://github.com/jstoolsspace/JSON-Studio/releases/download/v1.0.2/JSON-Studio-1.0.2-portable-x64.zip</Additional_Download_URL_1>
       <Additional_Download_URL_2>https://github.com/jstoolsspace/JSON-Studio/releases/latest</Additional_Download_URL_2>
     </Download_URLs>
   </Web_Info>
