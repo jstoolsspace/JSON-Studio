@@ -69,9 +69,10 @@ jobs:
           releaseName: "JSON Studio ${{ github.ref_name }}"
           releaseBody: "See the assets below to download and install."
           # Keep the release as a draft until ALL matrix jobs (and the portable
-          # zip) have uploaded their assets, then publish it manually with one
-          # click. Required because the repo uses immutable releases: a published
-          # release is frozen, so jobs that finish later can't add their assets.
+          # zip) have uploaded their assets. The separate `publish` job below
+          # flips it to published only after everything is attached. Required
+          # because the repo uses immutable releases: once published a release is
+          # frozen, so assets uploaded later would be rejected.
           releaseDraft: true
           prerelease: false
           args: ${{ matrix.args }}
@@ -112,11 +113,25 @@ jobs:
           "PORTABLE_ZIP=$zip" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       # Upload into the existing draft release (created by tauri-action above)
-      # without changing its draft state, so it stays unpublished until you
-      # click Publish. Using the gh CLI avoids prematurely publishing.
+      # without changing its draft state. The `publish` job below publishes it.
       - name: Upload portable zip to draft release
         if: matrix.platform == 'windows-latest' && startsWith(github.ref, 'refs/tags/')
         shell: pwsh
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release upload "${{ github.ref_name }}" "$env:PORTABLE_ZIP" --clobber
+
+  # Publish the draft release only after ALL build jobs (installers + portable
+  # zip) have finished and attached their assets. This removes any timing race:
+  # the release is frozen (immutable) only once it is complete.
+  publish:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release edit "${{ github.ref_name }}" --repo "${{ github.repository }}" --draft=false --latest
