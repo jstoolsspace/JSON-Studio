@@ -12,14 +12,14 @@
     <City_Town></City_Town>
     <State_Province></State_Province>
     <Zip_Postal_Code></Zip_Postal_Code>
-    <Country></Country>
+    <Country>Israel</Country>
     <Company_WebSite_URL>https://github.com/jstoolsspace/JSON-Studio</Company_WebSite_URL>
     <Contact_Info>
       <Author_First_Name>Anton</Author_First_Name>
-      <Author_Last_Name></Author_Last_Name>
+      <Author_Last_Name>Liberant</Author_Last_Name>
       <Author_Email>anliberant@gmail.com</Author_Email>
       <Contact_First_Name>Anton</Contact_First_Name>
-      <Contact_Last_Name></Contact_Last_Name>
+      <Contact_Last_Name>Liberant</Contact_Last_Name>
       <Contact_Email>anliberant@gmail.com</Contact_Email>
     </Contact_Info>
     <Support_Info>
@@ -35,9 +35,9 @@
 
   <Program_Info>
     <Program_Name>JSON Studio</Program_Name>
-    <Program_Version>1.0.2</Program_Version>
+    <Program_Version>1.0.3</Program_Version>
     <Program_Release_Month>06</Program_Release_Month>
-    <Program_Release_Day>26</Program_Release_Day>
+    <Program_Release_Day>28</Program_Release_Day>
     <Program_Release_Year>2026</Program_Release_Year>
     <Program_Cost_Dollars>0.00</Program_Cost_Dollars>
     <Program_Cost_Other_Code>USD</Program_Cost_Other_Code>
@@ -50,7 +50,7 @@
     <Program_Change_Info>Adds a portable Windows build (no install; settings kept beside the executable). Includes lossless tree/raw/search/JSONPath/diff/JSONL views, base64 image preview, jump-to-node, format/minify/export and a node detail panel.</Program_Change_Info>
     <Program_Specific_Category>Development</Program_Specific_Category>
     <Program_Categories>Development::Other</Program_Categories>
-    <Program_System_Requirements>Windows 10/11, macOS, or Linux. ~150 MB RAM.</Program_System_Requirements>
+    <Program_System_Requirements>Windows 10/11 (64-bit), macOS 11+, or 64-bit Linux. 4 GB RAM, ~150 MB disk. Edge WebView2 runtime on Windows (preinstalled on Win10/11).</Program_System_Requirements>
     <File_Info>
       <File_Size_Bytes>2653019</File_Size_Bytes>
       <File_Size_K>2591</File_Size_K>
@@ -89,7 +89,7 @@ What you can do:
 - Format and export: copy pretty-printed or minified JSON, or save the re-serialized document in one click.
 - Stay in flow with tabs, remembered sessions, live reload when a file changes on disk, a node detail panel with copyable path and value, and System/Light/Dark themes.
 
-JSON Studio is free and open source (MIT) and available for Windows, macOS and Linux.</Char_Desc_2000>
+A portable Windows build is also available: it runs without installation and keeps its settings beside the executable. JSON Studio is free and open source (MIT) and available for Windows, macOS and Linux.</Char_Desc_2000>
     </English>
   </Program_Descriptions>
 
@@ -102,9 +102,9 @@ JSON Studio is free and open source (MIT) and available for Windows, macOS and L
       <Application_XML_File_URL>https://raw.githubusercontent.com/jstoolsspace/JSON-Studio/main/pad_file.xml</Application_XML_File_URL>
     </Application_URLs>
     <Download_URLs>
-      <Primary_Download_URL>https://github.com/jstoolsspace/JSON-Studio/releases/download/v1.0.2/JSON.Studio_1.0.2_x64-setup.exe</Primary_Download_URL>
-      <Secondary_Download_URL>https://github.com/jstoolsspace/JSON-Studio/releases/download/v1.0.2/JSON.Studio_1.0.2_x64_en-US.msi</Secondary_Download_URL>
-      <Additional_Download_URL_1>https://github.com/jstoolsspace/JSON-Studio/releases/download/v1.0.2/JSON-Studio-1.0.2-portable-x64.zip</Additional_Download_URL_1>
+      <Primary_Download_URL>https://github.com/jstoolsspace/JSON-Studio/releases/download/v1.0.3/JSON.Studio_1.0.3_x64-setup.exe</Primary_Download_URL>
+      <Secondary_Download_URL>https://github.com/jstoolsspace/JSON-Studio/releases/download/v1.0.3/JSON.Studio_1.0.3_x64_en-US.msi</Secondary_Download_URL>
+      <Additional_Download_URL_1>https://github.com/jstoolsspace/JSON-Studio/releases/download/v1.0.3/JSON-Studio-1.0.3-portable-x64.zip</Additional_Download_URL_1>
       <Additional_Download_URL_2>https://github.com/jstoolsspace/JSON-Studio/releases/latest</Additional_Download_URL_2>
     </Download_URLs>
   </Web_Info>

@@ -83,29 +83,33 @@ jobs:
         if: matrix.platform == 'windows-latest' && startsWith(github.ref, 'refs/tags/')
         shell: pwsh
         run: |
-          $tag = "${{ github.ref_name }}"
-          $ver = $tag.TrimStart("v")
-          $exe = "apps/json-studio/src-tauri/target/release/json-studio.exe"
-          if (-not (Test-Path $exe)) { throw "binary not found at $exe" }
+          $ver = "${{ github.ref_name }}".TrimStart("v")
+          $base = "apps/json-studio/src-tauri/target/release"
+          # Find the built app exe regardless of its exact name (Tauri 2 may name
+          # it after the product, e.g. "JSON Studio.exe"). Exclude any installer.
+          $exe = Get-ChildItem -Path $base -Filter *.exe -File -ErrorAction SilentlyContinue |
+                 Where-Object { $_.Name -notmatch 'setup' } | Select-Object -First 1
+          if (-not $exe) { throw "no app .exe found in $base" }
+          Write-Host "Using binary: $($exe.FullName)"
           $stage = "portable/JSON Studio"
           New-Item -ItemType Directory -Force -Path $stage | Out-Null
-          Copy-Item $exe (Join-Path $stage "JSON Studio.exe")
+          Copy-Item $exe.FullName (Join-Path $stage "JSON Studio.exe")
           # Marker that switches the app into portable mode at runtime.
           New-Item -ItemType File -Force -Path (Join-Path $stage "portable.txt") | Out-Null
-          @"
-          JSON Studio $ver - Portable
-
-          Run "JSON Studio.exe". Settings, recent files and session are stored in
-          the "JSONStudioData" folder next to the executable (created on first run),
-          so nothing is written to the registry or your user profile.
-
-          Requires the Microsoft Edge WebView2 runtime, which is preinstalled on
-          Windows 10/11. If missing, get it from:
-          https://developer.microsoft.com/microsoft-edge/webview2/
-          "@ | Set-Content -Path (Join-Path $stage "README.txt") -Encoding UTF8
+          $readme = @(
+            "JSON Studio $ver - Portable",
+            "",
+            "Run 'JSON Studio.exe'. Settings, recent files and session are stored in the",
+            "'JSONStudioData' folder next to the executable, so nothing is written to the",
+            "registry or your user profile.",
+            "",
+            "Requires the Microsoft Edge WebView2 runtime (preinstalled on Windows 10/11):",
+            "https://developer.microsoft.com/microsoft-edge/webview2/"
+          )
+          Set-Content -Path (Join-Path $stage "README.txt") -Value $readme -Encoding UTF8
           $zip = "JSON-Studio-$ver-portable-x64.zip"
           Compress-Archive -Path "portable/*" -DestinationPath $zip -Force
-          echo "PORTABLE_ZIP=$zip" >> $env:GITHUB_ENV
+          "PORTABLE_ZIP=$zip" | Out-File -FilePath $env:GITHUB_ENV -Append
 
       # Upload into the existing draft release (created by tauri-action above)
       # without changing its draft state, so it stays unpublished until you
