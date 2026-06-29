@@ -35,7 +35,7 @@
 
   <Program_Info>
     <Program_Name>JSON Studio</Program_Name>
-    <Program_Version>1.0.4</Program_Version>
+    <Program_Version>1.0.5</Program_Version>
     <Program_Release_Month>06</Program_Release_Month>
     <Program_Release_Day>28</Program_Release_Day>
     <Program_Release_Year>2026</Program_Release_Year>
@@ -102,9 +102,9 @@ A portable Windows build is also available: it runs without installation and kee
       <Application_XML_File_URL>https://raw.githubusercontent.com/jstoolsspace/JSON-Studio/main/pad_file.xml</Application_XML_File_URL>
     </Application_URLs>
     <Download_URLs>
-      <Primary_Download_URL>https://github.com/jstoolsspace/JSON-Studio/releases/download/v1.0.4/JSON.Studio_1.0.4_x64-setup.exe</Primary_Download_URL>
-      <Secondary_Download_URL>https://github.com/jstoolsspace/JSON-Studio/releases/download/v1.0.4/JSON.Studio_1.0.4_x64_en-US.msi</Secondary_Download_URL>
-      <Additional_Download_URL_1>https://github.com/jstoolsspace/JSON-Studio/releases/download/v1.0.4/JSON-Studio-1.0.4-portable-x64.zip</Additional_Download_URL_1>
+      <Primary_Download_URL>https://github.com/jstoolsspace/JSON-Studio/releases/download/v1.0.5/JSON.Studio_1.0.5_x64-setup.exe</Primary_Download_URL>
+      <Secondary_Download_URL>https://github.com/jstoolsspace/JSON-Studio/releases/download/v1.0.5/JSON.Studio_1.0.5_x64_en-US.msi</Secondary_Download_URL>
+      <Additional_Download_URL_1>https://github.com/jstoolsspace/JSON-Studio/releases/download/v1.0.5/JSON-Studio-1.0.5-portable-x64.zip</Additional_Download_URL_1>
       <Additional_Download_URL_2>https://github.com/jstoolsspace/JSON-Studio/releases/latest</Additional_Download_URL_2>
     </Download_URLs>
   </Web_Info>

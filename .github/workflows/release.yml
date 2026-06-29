@@ -85,12 +85,19 @@ jobs:
         shell: pwsh
         run: |
           $ver = "${{ github.ref_name }}".TrimStart("v")
-          $base = "apps/json-studio/src-tauri/target/release"
-          # Find the built app exe regardless of its exact name (Tauri 2 may name
-          # it after the product, e.g. "JSON Studio.exe"). Exclude any installer.
-          $exe = Get-ChildItem -Path $base -Filter *.exe -File -ErrorAction SilentlyContinue |
-                 Where-Object { $_.Name -notmatch 'setup' } | Select-Object -First 1
-          if (-not $exe) { throw "no app .exe found in $base" }
+          # This is a Cargo workspace, so the binary lands in the workspace-root
+          # target dir. Search both possible layouts and find the app exe by name
+          # (Tauri 2 may name it after the product), excluding any installer.
+          $dirs = @("target/release", "apps/json-studio/src-tauri/target/release")
+          $exe = $null
+          foreach ($d in $dirs) {
+            if (Test-Path $d) {
+              $exe = Get-ChildItem -Path $d -Filter *.exe -File -ErrorAction SilentlyContinue |
+                     Where-Object { $_.Name -notmatch 'setup' } | Select-Object -First 1
+              if ($exe) { break }
+            }
+          }
+          if (-not $exe) { throw "no app .exe found in: $($dirs -join ', ')" }
           Write-Host "Using binary: $($exe.FullName)"
           $stage = "portable/JSON Studio"
           New-Item -ItemType Directory -Force -Path $stage | Out-Null

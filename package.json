@@ -1,6 +1,6 @@
 {
   "name": "jstools-json-studio-monorepo",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "private": true,
   "description": "A private desktop workspace for exploring, querying and comparing JSON.",
   "license": "MIT",
