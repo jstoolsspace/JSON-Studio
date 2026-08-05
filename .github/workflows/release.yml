@@ -128,6 +128,80 @@ jobs:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: gh release upload "${{ github.ref_name }}" "$env:PORTABLE_ZIP" --clobber
 
+      # Save the built Windows binary so the separate `msix` job can package it.
+      - name: Upload Windows binary artifact
+        if: matrix.platform == 'windows-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: windows-binary
+          if-no-files-found: warn
+          path: |
+            target/release/*.exe
+            target/release/*.dll
+            apps/json-studio/src-tauri/target/release/*.exe
+            apps/json-studio/src-tauri/target/release/*.dll
+
+  # Package the app as an MSIX for the Microsoft Store. Runs in its own job so a
+  # failure here never blocks the normal installer release. The .msix is uploaded
+  # as a workflow artifact (not a public release asset, since an unsigned MSIX
+  # won't install outside the Store) — download it and upload to Partner Center.
+  msix:
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Download Windows binary
+        uses: actions/download-artifact@v4
+        with:
+          name: windows-binary
+          path: winbin
+      - name: Build MSIX
+        shell: pwsh
+        run: |
+          $ver = "${{ github.ref_name }}".TrimStart("v")
+          $msixVer = "$ver.0"
+          $exe = Get-ChildItem winbin -Recurse -Filter *.exe -File |
+                 Where-Object { $_.Name -notmatch 'setup' } | Select-Object -First 1
+          if (-not $exe) { throw "app exe not found in artifact" }
+          $stage = "msix-stage"
+          New-Item -ItemType Directory -Force -Path "$stage/Assets" | Out-Null
+          Copy-Item $exe.FullName "$stage/JSON Studio.exe"
+          Get-ChildItem (Split-Path $exe.FullName) -Filter *.dll -File -ErrorAction SilentlyContinue |
+            Copy-Item -Destination $stage
+          # Manifest with the build version substituted in.
+          (Get-Content apps/json-studio/packaging/AppxManifest.xml -Raw).Replace("__VERSION__", $msixVer) |
+            Set-Content "$stage/AppxManifest.xml" -Encoding UTF8
+          # Generate the required tile/logo PNGs from the brand logo.
+          Add-Type -AssemblyName System.Drawing
+          $src = (Resolve-Path "brand/logo-256.png").Path
+          function Resize($dst, $w, $h) {
+            $img = [System.Drawing.Image]::FromFile($src)
+            $bmp = New-Object System.Drawing.Bitmap $w, $h
+            $g = [System.Drawing.Graphics]::FromImage($bmp)
+            $g.InterpolationMode = 'HighQualityBicubic'
+            $g.Clear([System.Drawing.Color]::Transparent)
+            $g.DrawImage($img, 0, 0, $w, $h)
+            $bmp.Save($dst, [System.Drawing.Imaging.ImageFormat]::Png)
+            $g.Dispose(); $bmp.Dispose(); $img.Dispose()
+          }
+          Resize "$stage/Assets/Square44x44Logo.png" 44 44
+          Resize "$stage/Assets/Square150x150Logo.png" 150 150
+          Resize "$stage/Assets/StoreLogo.png" 50 50
+          # Locate makeappx.exe from the installed Windows SDK.
+          $makeappx = Get-ChildItem "C:/Program Files (x86)/Windows Kits/10/bin/*/x64/makeappx.exe" -ErrorAction SilentlyContinue |
+                      Sort-Object FullName -Descending | Select-Object -First 1
+          if (-not $makeappx) { throw "makeappx.exe not found" }
+          $msix = "JSON-Studio-$ver-x64.msix"
+          & $makeappx.FullName pack /d $stage /p $msix /o
+          if ($LASTEXITCODE -ne 0) { throw "makeappx failed ($LASTEXITCODE)" }
+          Write-Host "Built $msix"
+      - name: Upload MSIX artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: msix-package
+          path: "*.msix"
+
   # Publish the draft release only after ALL build jobs (installers + portable
   # zip) have finished and attached their assets. This removes any timing race:
   # the release is frozen (immutable) only once it is complete.
